@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export function SelectTheme({ text }: { text?: boolean }) {
   const { setTheme, theme } = useTheme();
@@ -10,24 +11,44 @@ export function SelectTheme({ text }: { text?: boolean }) {
     <>
       {text === false ? (
         <div
-          className={`flex items-center gap-2 rounded-lg p-3 text-center transition-all duration-300 hover:bg-blue-600/5 hover:text-blue-500`}
+          className={`flex cursor-pointer items-center gap-2 rounded-lg p-3 text-center transition-all duration-300 hover:text-blue-500`}
           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         >
-          <Sun className="size-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute size-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <ThemeIcon className="size-6" />
         </div>
       ) : (
         <div
-          className={`flex items-center gap-2 rounded-lg text-center transition-all duration-300 hover:bg-blue-600/5 hover:text-blue-500`}
+          className={`flex cursor-pointer items-center gap-2 rounded-lg text-center transition-all duration-300 hover:bg-blue-600/5 hover:text-blue-500`}
           onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
         >
-          <Sun className="size-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-          <Moon className="absolute size-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <ThemeIcon className="size-4" />
           <span className="text-base">
             {theme === 'light' ? 'Dark' : 'Light'} Mode
           </span>
         </div>
       )}
     </>
+  );
+}
+
+function ThemeIcon({ className = '' }: { className?: string }) {
+  const { theme } = useTheme();
+  return (
+    <AnimatePresence>
+      {theme === 'light' ? (
+        <motion.div
+          initial={{ opacity: 0, rotate: '0deg' }}
+          animate={{ opacity: 1, rotate: '360deg' }}
+          exit={{ opacity: 0, rotate: '720deg' }}
+          transition={{ duration: 0.2 }}
+        >
+          <Sun className={`${className}`} />
+        </motion.div>
+      ) : (
+        <motion.div transition={{ duration: 0.2 }}>
+          <Moon className={`${className}`} />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
